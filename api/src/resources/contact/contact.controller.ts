@@ -2,8 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { ContactService } from './contact.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
+import { ApiTags } from '@nestjs/swagger';
 
-@Controller('contact')
+@Controller('contacts')
+@ApiTags('Contact')
 export class ContactController {
   constructor(private readonly contactService: ContactService) {}
 
