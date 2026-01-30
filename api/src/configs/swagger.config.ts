@@ -14,6 +14,10 @@ import { DocumentBuilder } from '@nestjs/swagger';
     .addServer('https://staging.your-website.com', "Staging server")
     .addServer('http://localhost:3001', "Testing server")
     .addTag('User', 'Operations related to users')
+    .addTag('Auth', 'Operations related to authentication')
+    .addTag('Profile', 'Operations related to user profiles')
+    .addTag('Contact', 'Operations related to contacts')
+    .addTag('Admin', 'Administrative operations')
     // Add bearer authentication if your API uses JWTs
     .addBearerAuth()
     .build();
