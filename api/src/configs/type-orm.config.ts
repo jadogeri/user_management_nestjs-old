@@ -1,9 +1,12 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { SeederOptions } from 'typeorm-extension';
+  import { DataSource } from 'typeorm';
+
 // import UserSeeder from '../resources/user/user.seeder';
 // import { UserFactory } from '../resources/user/user.factory';
 import dotenv from 'dotenv';
 import { User } from '../modules/user/entities/user.entity';
+
 
 dotenv.config();
 
@@ -36,4 +39,8 @@ export const dataSourceOptions: TypeOrmModuleOptions & SeederOptions = {
   // Use 'formatted-console' for readable SQL in dev
   logger: "advanced-console", };
 
+export const AppDataSource = new DataSource(dataSourceOptions as any);
+
+
 export default dataSourceOptions;
+

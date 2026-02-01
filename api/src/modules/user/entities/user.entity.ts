@@ -1,9 +1,10 @@
-import { faker } from '@faker-js/faker';
+// import { faker } from '@faker-js/faker';
 import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsPositive, IsString, Length, Max, Min } from 'class-validator';
 import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToOne } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger'; // Added import
 import { Profile } from 'src/modules/profile/entities/profile.entity';
+import { Auth } from 'src/modules/auth/entities/auth.entity';
 
 @Entity()
 export class User {
@@ -25,14 +26,6 @@ export class User {
   @Length(2, 100)
   lastName: string;
 
-  @ApiProperty({ example: 'john.doe@example.com', description: 'The unique email of the user' })
-  @Column({ unique: true, type: 'varchar', length: 150 })
-  @IsString()
-  @IsNotEmpty()
-  @Length(5, 150)
-  @IsEmail()
-  email: string;
-
   @ApiProperty({ example: 25, description: 'The age of the user' })
   @Column({ type: 'int' })
   @IsNotEmpty()
@@ -48,8 +41,11 @@ export class User {
     return `${this.firstName} ${this.lastName}`;
   }
 
-   @OneToOne(() => Profile, (profile) => profile.user)
-   profile: Profile;
+  @OneToOne(() => Profile, (profile) => profile.user)
+  profile: Profile;
+
+  @OneToOne(() => Auth, (auth) => auth.user)
+  auth: Auth;
 
 //   @ApiProperty({ example: '000-00-0000', description: 'Social Security Number (Auto-generated)' })
 //   @Column()

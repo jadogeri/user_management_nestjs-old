@@ -1,19 +1,23 @@
-// src/user/user.repository.ts
-import { Repository as BaseRepository, EntityManager } from 'typeorm';
+// user.repository.ts
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from '../../shared/decorators/repository.decorator';
-
-@Repository()
-export class UserRepository extends BaseRepository<User> {
-  constructor(private readonly entityManager: EntityManager) {
-    super(User, entityManager);
+import { UserRepositoryInterface } from 'src/shared/interfaces/user-repository.interface';
+@Injectable()
+export class UserRepository extends Repository<User> implements UserRepositoryInterface {
+  constructor(private readonly dataSource: DataSource) {
+    super(User, dataSource.createEntityManager());
   }
 
-  async findByUsername(username: string): Promise<User | null> {    
-    return await this.findOne({ where: { firstName: username } }); // Custom method
+  // Add your custom method here
+  async findActiveUser(): Promise<User | null> {
+    return this.findOne({  });
   }
 
-  async findByEmail(email: string): Promise<User | null> {
-    return await this.findOne({ where: { email } }); // Custom method
+  // Add more custom methods as needed
+  async findByFirstName(firstName: string): Promise<User | null> {
+    return this.findOne({ where: { firstName } });
   }
+
+  
 }

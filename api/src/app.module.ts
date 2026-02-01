@@ -8,6 +8,9 @@ import dataSourceOptions from './configs/type-orm.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { PermissionModule } from './modules/permission/permission.module';
 import { RoleModule } from './modules/role/role.module';
+import { ConfigModule } from '@nestjs/config';
+
+
 
 @Module({
   imports: [
@@ -17,7 +20,8 @@ import { RoleModule } from './modules/role/role.module';
     ContactModule,
     PermissionModule,
     RoleModule,
-    TypeOrmModule.forRoot({...dataSourceOptions }),
+    TypeOrmModule.forRoot({ ...dataSourceOptions }),
+    ConfigModule.forRoot({   isGlobal: true,  }), // Makes ConfigService available everywhere
 
   ],
   controllers: [],
@@ -31,4 +35,6 @@ export class AppModule implements NestModule {
       .forRoutes('users', 'profiles', 'contacts');
   }
 }
+
+
 
