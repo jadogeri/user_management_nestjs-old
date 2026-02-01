@@ -5,4 +5,5 @@ export enum Resource {
     ROLE = 'role',
     PERMISSION = 'permission',
     ADMIN = 'admin',
+    ALL = '*',
 }
