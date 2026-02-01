@@ -1,7 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Unique } from 'typeorm';
-import { Role } from './Role'; // Assuming you have a Role entity
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Unique, ManyToMany } from 'typeorm';
 import { Resource } from 'src/shared/enums/resource.enum';
 import { Action } from 'src/shared/enums/action.enum';
+import { Role } from 'src/modules/role/entities/role.entity';
 
 @Entity('permissions')
 @Unique(['role', 'resource', 'action']) // Composite unique constraint
@@ -12,15 +12,17 @@ export class Permission {
   @Column({
     type: 'enum',
     enum: Resource,
+    default: Resource.AUTH,
   })
   resource: Resource;
 
   @Column({
     type: 'enum',
     enum: Action,
+    default: Action.READ,
   })
   action: Action;
 
-  @ManyToOne(() => Role, (role: Role) => role.permissions)
-  role: Role;
+  @ManyToMany(() => Role, (role: Role) => role.permissions)
+  roles: Role[];    
 }

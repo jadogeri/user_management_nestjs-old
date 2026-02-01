@@ -19,5 +19,13 @@ export class UserRepository extends Repository<User> implements UserRepositoryIn
     return this.findOne({ where: { firstName } });
   }
 
+  async findByUserId(userId: number): Promise<User | null> {
+    const user = await this.findOne({
+      where: { id: userId },
+      relations: ['roles', 'roles.permissions'],
+    });
+    return user;
+  }
+
   
 }
