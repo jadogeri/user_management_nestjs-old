@@ -1,11 +1,12 @@
 // import { faker } from '@faker-js/faker';
 import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsPositive, IsString, Length, Max, Min } from 'class-validator';
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToOne, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToOne, ManyToMany, JoinTable, getRepository } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger'; // Added import
 import { Profile } from 'src/modules/profile/entities/profile.entity';
 import { Auth } from 'src/modules/auth/entities/auth.entity';
 import { Role } from 'src/modules/role/entities/role.entity';
+import { UserRole } from 'src/shared/enums/user-role.enum';
 
 @Entity()
 export class User {
@@ -48,9 +49,22 @@ export class User {
   @OneToOne(() => Auth, (auth) => auth.user)
   auth: Auth;
 
-  @ManyToMany(() => Role, (role: Role) => role.users)
+  @ManyToMany(() => Role, (role: Role) => role.users, { cascade: true })
   @JoinTable({ name: 'users_roles' })  // This decorator is required on the owning side of the relationship
   roles: Role[];
+
+  @BeforeInsert()
+  async setDefaultRole() {
+    // Only assign default if no roles are provided manually
+    if (!this.roles || this.roles.length === 0) {
+      const roleRepository = getRepository(Role); 
+      const defaultRole = await roleRepository.findOneBy({ name: UserRole.USER });
+      
+      if (defaultRole) {
+        this.roles = [defaultRole];
+      }
+    }
+  }
 
 //   @ApiProperty({ example: '000-00-0000', description: 'Social Security Number (Auto-generated)' })
 //   @Column()

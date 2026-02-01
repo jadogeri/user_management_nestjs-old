@@ -12,6 +12,9 @@ export class Role {
   @Column({ type: 'enum', enum: UserRole, unique: true })
   name: UserRole;
 
+  @Column({ type: 'varchar', nullable: true })
+  description: string;
+
   // Many users can have this role
   @ManyToMany(() => User, (user) => user.roles)
   users: User[];
