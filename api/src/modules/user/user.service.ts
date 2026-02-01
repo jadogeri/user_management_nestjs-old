@@ -6,15 +6,16 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
 import { Service } from '../../shared/decorators/service.decorator';
+import { UserRepository } from './user.repository';
 
 @Service()  
 export class UserService {
   constructor(
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: UserRepository, // Inject the custom repository
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
+    
     const user = this.userRepository.create(createUserDto);
     return await this.userRepository.save(user); // Triggers @BeforeInsert
   }
@@ -39,4 +40,10 @@ export class UserService {
     const user = await this.findOne(id);
     await this.userRepository.remove(user);
   }
+
+  async findActiveUser(): Promise<User | null> {
+    return this.userRepository.findActiveUser();
+  }
+
+
 }
