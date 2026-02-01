@@ -10,14 +10,14 @@ export class Permission {
   id: number;
 
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: Resource,
     default: Resource.AUTH,
   })
   resource: Resource;
 
   @Column({
-    type: 'enum',
+    type: 'simple-enum',
     enum: Action,
     default: Action.READ,
   })

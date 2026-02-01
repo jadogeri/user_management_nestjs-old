@@ -27,7 +27,7 @@ export const dataSourceOptions: TypeOrmModuleOptions & SeederOptions = {
     // 🔍 Check these paths carefully!
 
   entities: [__dirname + '/../modules/**/*.entity{.ts,.js}'],
-  migrations: [__dirname + '/../migrations/*{.ts,.js}'],
+  migrations: [__dirname + '/../database/migrations/*{.ts,.js}'],
   // seeds: [UserSeeder],
   // factories: [UserFactory],
   synchronize: !isProduction,
@@ -39,7 +39,7 @@ export const dataSourceOptions: TypeOrmModuleOptions & SeederOptions = {
   // Use 'formatted-console' for readable SQL in dev
   logger: "advanced-console", };
 
-export const AppDataSource = new DataSource(dataSourceOptions as any);
+// export const AppDataSource = new DataSource(dataSourceOptions as any);
 
 
 export default dataSourceOptions;
