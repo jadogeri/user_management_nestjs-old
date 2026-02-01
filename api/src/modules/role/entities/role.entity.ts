@@ -20,6 +20,15 @@ export class Role {
   users: User[];
 
   @ManyToMany(() => Permission, (permission: Permission) => permission.roles)
-  @JoinTable({ name: 'roles_permissions' }) // TypeORM creates this junction table
-  permissions: Permission[];    
+@JoinTable({
+  name: "roles_permissions", // The junction table name
+  joinColumn: {
+    name: "roleId", // The column for the current entity (Role)
+    referencedColumnName: "id"
+  },
+  inverseJoinColumn: {
+    name: "permissionId", // The column for the target entity (Permission)
+    referencedColumnName: "id"
+  }
+})  permissions: Permission[];    
 }

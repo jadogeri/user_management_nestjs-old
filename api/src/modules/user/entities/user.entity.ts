@@ -50,7 +50,17 @@ export class User {
   auth: Auth;
 
   @ManyToMany(() => Role, (role: Role) => role.users, { cascade: true })
-  @JoinTable({ name: 'users_roles' })  // This decorator is required on the owning side of the relationship
+  @JoinTable({ 
+    name: 'users_roles',
+    joinColumn: {
+      name: 'userId',            // The column name for the User ID
+      referencedColumnName: 'id'
+    },
+    inverseJoinColumn: {
+      name: 'roleId',            // The column name for the Role ID
+      referencedColumnName: 'id'
+    }
+  })
   roles: Role[];
 
   @BeforeInsert()
