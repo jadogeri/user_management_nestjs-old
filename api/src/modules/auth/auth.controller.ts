@@ -8,6 +8,7 @@ import { Auth } from './entities/auth.entity';
 import { AuthLoginDto } from './dto/login-auth.do';
 import { LocalAuthGuard } from 'src/shared/guards/local-auth.guard';
 import { User } from 'src/shared/decorators/user.decorator';
+import type { UserPayload } from 'src/shared/interfaces/user-payload.interface';
 
 @Controller('auths')
 @ApiTags('Auth')
@@ -57,7 +58,7 @@ export class AuthController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @UseGuards(LocalAuthGuard)
-  async signIn(@User() user: any): Promise<any> {
+  async signIn(@User() user: UserPayload): Promise<any> {
     console.log("AuthController: Received login request for:", user.email);
     console.log("AuthController: Passing to AuthService.signIn", user);
     return this.authService.signIn(user);

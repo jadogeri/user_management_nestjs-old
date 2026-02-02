@@ -1,10 +1,12 @@
 // import { faker } from '@faker-js/faker';
 import { Expose } from 'class-transformer';
 import { IsEmail, IsNotEmpty, IsPositive, IsString, Length, Max, Min } from 'class-validator';
-import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToOne } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BeforeInsert, OneToOne, ManyToMany, JoinTable, getRepository } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger'; // Added import
 import { Profile } from 'src/modules/profile/entities/profile.entity';
 import { Auth } from 'src/modules/auth/entities/auth.entity';
+import { Role } from 'src/modules/role/entities/role.entity';
+import { UserRole } from 'src/shared/enums/user-role.enum';
 
 @Entity()
 export class User {
@@ -46,6 +48,22 @@ export class User {
 
   @OneToOne(() => Auth, (auth) => auth.user)
   auth: Auth;
+
+  @ManyToMany(() => Role, (role: Role) => role.users, { cascade: true })
+  @JoinTable({ 
+    name: 'users_roles',
+    joinColumn: {
+      name: 'userId',            // The column name for the User ID
+      referencedColumnName: 'id'
+    },
+    inverseJoinColumn: {
+      name: 'roleId',            // The column name for the Role ID
+      referencedColumnName: 'id'
+    }
+  })
+  roles: Role[];
+
+
 
 //   @ApiProperty({ example: '000-00-0000', description: 'Social Security Number (Auto-generated)' })
 //   @Column()

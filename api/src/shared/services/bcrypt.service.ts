@@ -1,7 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import * as bcrypt from 'bcrypt';
 import { Service } from '../decorators/service.decorator';
-import { createHmac } from 'crypto';
+import { createHmac } from 'node:crypto';
 
 @Service()
 export class BcryptService {
