@@ -19,6 +19,7 @@ import { UserRepository } from '../user/user.repository';
 import { UserPayload } from 'src/shared/interfaces/user-payload.interface';
 import { TokenService } from 'src/shared/services/token/token.service';
 import { SessionService } from '../session/session.service';
+import { ArgonService } from '../argon/argon.service';
 
 @Service()
 export class AuthService {
@@ -32,6 +33,7 @@ export class AuthService {
     private readonly userRepository: UserRepository,
     private readonly tokenService: TokenService,
     private readonly sessionService: SessionService,
+    private readonly argonService: ArgonService,
   ) {}
 
 
@@ -79,12 +81,17 @@ const savedAuth = await this.authRepository.save(newAuth);
     //#TODO : Hash the refresh token before storing
     // For demo purposes, we are storing it as is
     // data.refreshToken will be hashed later with argon2
-    const refreshTokenHash = data.refreshToken; // Storing plain for demo; hash in production
-    const session = await this.sessionService.createSession(userPayload.userId, refreshTokenHash);
+    const userRefreshToken = data.refreshToken; // Storing plain for demo; hash in production
+    const hashedRefreshToken = await this.argonService.hashPassword(userRefreshToken);
+    console.log("Hashed refresh token:", hashedRefreshToken);
+    const session = await this.sessionService.createSession(userPayload.userId, hashedRefreshToken);
+
+    //#TODO need to log session creation success
+    //#TODO Add refresh token to cookies
     console.log("Created session:", session);
     return {
       accessToken: data.accessToken,
-      refreshToken: data.refreshToken,
+      refreshToken: userRefreshToken,
       userId: userPayload.userId
     }
 
