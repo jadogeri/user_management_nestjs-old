@@ -17,7 +17,7 @@ export class SessionCleanupService {
   // This task runs every day at midnight
   @Cron(CronExpression.EVERY_MINUTE)
   async handleCleanup() {
-    console.log('Session cleanup task is currently disabled..................');
+    console.log('Session cleanup task is currently active..................');
     
     this.logger.log('Running session cleanup task...');
     this.logger.debug('Starting expired token cleanup...');
@@ -25,7 +25,10 @@ export class SessionCleanupService {
     const result = await this.sessionRepository
       .createQueryBuilder()
       .delete()
-      .where('expiresAt < :now', { now: new Date() }) //
+      //#TODO replace  commented line with the line below after testing
+      //.where('expiresAt < :now', { now: new Date() }) //
+      .where("expiresAt < datetime('now', '-2 minutes')")
+
       .execute();
 
     this.logger.debug(`Cleanup complete. Removed ${result.affected} expired tokens.`);

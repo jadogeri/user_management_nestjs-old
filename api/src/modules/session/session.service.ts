@@ -29,8 +29,11 @@ export class SessionService {
     const newSession = this.sessionRepository.create({
       refreshTokenHash,
       auth: { id: userId },
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      //#TODO replace commented line with the line below after testing
+      expiresAt: new Date(Date.now() + 2 * 60 * 1000), // 2 minutes
+      //expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     });
+    
 
     return await this.sessionRepository.save(newSession);
   }
