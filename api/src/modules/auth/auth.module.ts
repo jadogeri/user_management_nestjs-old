@@ -10,11 +10,13 @@ import { PassportModule } from '@nestjs/passport/dist/passport.module';
 import { BcryptService } from 'src/shared/services/bcrypt.service';
 import { TokenModule } from 'src/shared/services/token/token.module';
 import { SessionModule } from '../session/session.module';
+import { ArgonModule } from '../argon/argon.module';
+import { ArgonService } from '../argon/argon.service';
 
 @Module({
-  imports: [SessionModule, PassportModule, UserModule, TokenModule, TypeOrmModule.forFeature([Auth])],
+  imports: [ArgonModule, SessionModule, PassportModule, UserModule, TokenModule, TypeOrmModule.forFeature([Auth])],
   controllers: [AuthController], 
-  providers: [BcryptService, AuthService,  AuthRepository, LocalStrategy],
+  providers: [BcryptService, AuthService,ArgonService, AuthRepository, LocalStrategy],
   exports: [AuthService, AuthRepository, TypeOrmModule.forFeature([Auth])],
 })
 export class AuthModule {}

@@ -11,10 +11,13 @@ import { RoleModule } from './modules/role/role.module';
 import { ConfigModule } from '@nestjs/config';
 import { SessionModule } from './modules/session/session.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { ArgonModule } from './modules/argon/argon.module';
+import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 
 
 @Module({
-  imports: [
+  imports: [    
     UserModule, 
     AuthModule, 
     ProfileModule, 
@@ -24,11 +27,23 @@ import { ScheduleModule } from '@nestjs/schedule';
     TypeOrmModule.forRoot({ ...dataSourceOptions }),
     ConfigModule.forRoot({   isGlobal: true,  }),
     SessionModule, // Makes ConfigService available everywhere
-    ScheduleModule.forRoot(), //
-
+    ScheduleModule.forRoot(), ArgonModule, //
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000, // 1 minute in milliseconds
+          limit: 10,
+        },
+      ],
+    })
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard, // Apply rate limiting globally
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
