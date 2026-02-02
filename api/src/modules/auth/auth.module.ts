@@ -9,11 +9,12 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { PassportModule } from '@nestjs/passport/dist/passport.module';
 import { BcryptService } from 'src/shared/services/bcrypt.service';
 import { TokenModule } from 'src/shared/services/token/token.module';
+import { SessionModule } from '../session/session.module';
 
 @Module({
-  imports: [PassportModule, UserModule, TokenModule, TypeOrmModule.forFeature([Auth])],
+  imports: [SessionModule, PassportModule, UserModule, TokenModule, TypeOrmModule.forFeature([Auth])],
   controllers: [AuthController], 
-  providers: [BcryptService, AuthService, AuthRepository, LocalStrategy],
+  providers: [BcryptService, AuthService,  AuthRepository, LocalStrategy],
   exports: [AuthService, AuthRepository, TypeOrmModule.forFeature([Auth])],
 })
 export class AuthModule {}

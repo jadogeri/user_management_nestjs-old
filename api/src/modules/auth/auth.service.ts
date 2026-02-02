@@ -18,6 +18,7 @@ import { BcryptService } from 'src/shared/services/bcrypt.service';
 import { UserRepository } from '../user/user.repository';
 import { UserPayload } from 'src/shared/interfaces/user-payload.interface';
 import { TokenService } from 'src/shared/services/token/token.service';
+import { SessionService } from '../session/session.service';
 
 @Service()
 export class AuthService {
@@ -30,6 +31,7 @@ export class AuthService {
     private readonly userService: UserService, // Inject the TypeORM repository
     private readonly userRepository: UserRepository,
     private readonly tokenService: TokenService,
+    private readonly sessionService: SessionService,
   ) {}
 
 
@@ -71,6 +73,15 @@ const savedAuth = await this.authRepository.save(newAuth);
     const data = await this.tokenService.generateAuthTokens(userPayload); 
     console.log("Generated tokens:", data);
     // Here you would implement the actual token generation logic
+
+    //create a session
+    //const refreshTokenHash = await this.bcryptService.hashData(data.refreshToken);
+    //#TODO : Hash the refresh token before storing
+    // For demo purposes, we are storing it as is
+    // data.refreshToken will be hashed later with argon2
+    const refreshTokenHash = data.refreshToken; // Storing plain for demo; hash in production
+    const session = await this.sessionService.createSession(userPayload.userId, refreshTokenHash);
+    console.log("Created session:", session);
     return {
       accessToken: data.accessToken,
       refreshToken: data.refreshToken,

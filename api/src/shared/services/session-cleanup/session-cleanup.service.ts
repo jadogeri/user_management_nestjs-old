@@ -2,29 +2,34 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Session } from 'src/modules/session/entities/session.entity';
 import { Repository, LessThan } from 'typeorm';
-import { RefreshToken } from './entities/refresh-token.entity';
 
 @Injectable()
 export class SessionCleanupService {
   private readonly logger = new Logger(SessionCleanupService.name);
 
   constructor(
-    @InjectRepository(RefreshToken)
-    private readonly tokenRepository: Repository<RefreshToken>,
+    @InjectRepository(Session)
+    private readonly sessionRepository: Repository<Session>,
   ) {}
 
   // This task runs every day at midnight
-  @Cron(CronExpression.EVERY_HOUR)
+  @Cron(CronExpression.EVERY_MINUTE)
   async handleCleanup() {
+    console.log('Session cleanup task is currently disabled..................');
+    
+    this.logger.log('Running session cleanup task...');
     this.logger.debug('Starting expired token cleanup...');
 
-    const result = await this.tokenRepository
+    const result = await this.sessionRepository
       .createQueryBuilder()
       .delete()
       .where('expiresAt < :now', { now: new Date() }) //
       .execute();
 
     this.logger.debug(`Cleanup complete. Removed ${result.affected} expired tokens.`);
+
+    
   }
 }

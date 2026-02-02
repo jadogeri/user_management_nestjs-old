@@ -18,6 +18,9 @@ import { DocumentBuilder } from '@nestjs/swagger';
     .addTag('Profile', 'Operations related to user profiles')
     .addTag('Contact', 'Operations related to contacts')
     .addTag('Admin', 'Administrative operations')
+    .addTag('Session', 'Operations related to user sessions')
+    .addTag('Permission', 'Operations related to permissions')
+    .addTag('Role', 'Operations related to roles')
     // Add bearer authentication if your API uses JWTs
     .addBearerAuth()
     .build();

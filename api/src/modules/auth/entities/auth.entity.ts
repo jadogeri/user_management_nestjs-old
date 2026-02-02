@@ -19,7 +19,7 @@ export class Auth {
   @IsEmail()
   email: string;
 
-  @Exclude({ toPlainOnly: true, toClassOnly: true }) // 👈 Exclude from serialization
+  //@Exclude({ toPlainOnly: true, toClassOnly: true }) // 👈 Exclude from serialization
   @Column()
   @IsString()
   password: string;

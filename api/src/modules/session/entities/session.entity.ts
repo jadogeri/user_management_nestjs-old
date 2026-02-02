@@ -1,5 +1,5 @@
 import { Auth } from "src/modules/auth/entities/auth.entity";
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from "typeorm";
 
 @Entity('sessions')
 export class Session {
@@ -11,6 +11,10 @@ export class Session {
 
   @Column()
   expiresAt: Date;
+
+  @Column()
+  @CreateDateColumn()  
+  createdAt: Date = new Date();
 
   @ManyToOne(() => Auth, (auth) => auth.sessions, { onDelete: 'CASCADE' })
   auth: Auth;
