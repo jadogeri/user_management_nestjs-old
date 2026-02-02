@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import { User } from 'src/modules/user/entities/user.entity';
 import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Session } from 'src/modules/session/entities/session.entity';
 
 @Entity()
 export class Auth {
@@ -18,7 +19,7 @@ export class Auth {
   @IsEmail()
   email: string;
 
-  // @Exclude({ toPlainOnly: true, toClassOnly: true }) // 👈 Exclude from serialization
+  @Exclude({ toPlainOnly: true, toClassOnly: true }) // 👈 Exclude from serialization
   @Column()
   @IsString()
   password: string;
@@ -35,4 +36,9 @@ export class Auth {
   @OneToOne(() => User, (user) => user.auth, { onDelete: 'CASCADE', cascade: true }) // CRITICAL: This allows saving User via Auth
   @JoinColumn({ name: 'user_id' })
   user: User;
+
+  // In your Auth entity file (e.g., auth.entity.ts)
+  @OneToMany(() => Session, (session) => session.auth)
+  sessions: Session[];
+  
 }
