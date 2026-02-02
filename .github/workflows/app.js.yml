@@ -8,12 +8,12 @@ on:
     branches: [ "main" ]
     paths:
       - 'api/src/**'
-      - 'api/tests/**'
+      - 'api/test/**/*.spec.ts'
   pull_request:
     branches: [ "main" ]
     paths:
-      - 'api/src/**'
-      - 'api/tests/**'
+      - 'api/src/**/*.ts'
+      - 'api/test/**/*.spec.ts'
 
 
 jobs:

@@ -1,0 +1,46 @@
+t's a design decision, there's not a "best way" and there are different "good practices". Auth0 has a lot of documentation and posts about jwt and jwt auth workflow design, if you want to check it out. Anyway, this is how I usually do it:
+
+I don't send the refresh token on every request (a man in the middle attack will have more chances of grabbing your refresh token).
+I only send access tokens with every request. If its not valid, throw 401.
+Then I have a /refresh endpoint where you need to send the refresh token + current access token to get a new access token
+This means that the workflow will go like this:
+
+Browser sends request with access token
+Server checks the access token, it's ok, go ahead
+Browser sends request with access token (req 1)
+Server checks the access token, it's expired or invalid, throw 401
+Browser calls /refresh, gets a new access token (req 2)
+Browser sends request with the new access token (req 3)
+Server checks the access token, it's ok, go ahead
+But this isn't ideal, we need to perform 3 requests when the access token has expired.
+
+To avoid this, in the api consumer, I would usually implement some sort of interceptor before calling every protected route of the API. I check the exp in the browser before every request to the API, if the token has expired I do a /refresh and avoid the obvious 401. That means that we only need 2 requests once in a while.
+
+Also, I usually implement a Refresh Token Rotation technique, depending on the project.
+
+
+
+
+
+
+
+
+
+
+@Controller('auth')
+export class AuthController {
+  constructor(private authService: AuthService) {}
+
+  @UseGuards(JwtRefreshGuard)
+  @Post('refresh')
+  async refreshTokens(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const userId = req.user['sub'];
+    const oldToken = req.user['refreshToken'];
+    
+    // Rotation: generateTokens() should save new refresh hash to DB and invalidate oldToken
+    const { accessToken, refreshToken } = await this.authService.refreshTokens(userId, oldToken);
+
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true });
+    return { access_token: accessToken };
+  }
+}
