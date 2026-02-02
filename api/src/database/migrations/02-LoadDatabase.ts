@@ -7,22 +7,8 @@ export class LoadDatabase1234567890001 implements MigrationInterface {
     name = 'LoadDatabase1234567890001'
     public async up(queryRunner: QueryRunner): Promise<void> {
         // Path to your 'UP' script in the dist folder
-                console.log("__dirname in migration is:", __dirname);
+        console.log("__dirname in migration is:", __dirname);
         
-        // Inside your migration .ts file
-                // const sql = fs.readFileSync(
-                //     path.join(__dirname, '..', 'sql', 'permissions', 'insert_permissions.up.sql'), 
-                //     'utf8'
-                // );
-        
-                // console.log("Executing SQL for seeding permissions...");
-                // const statements = sql.split(';').filter(s => s.trim() !== '');
-                // console.log("SQL Statements to execute:", statements);
-                // for (const statement of statements) {
-                //     console.log("Executing statement:", statement);
-                //     await queryRunner.query(statement);
-                // }
-                // console.log("Permissions seeded successfully.");
 
         await sqlRunner(queryRunner, '../database/sql/permissions/insert_permissions.up.sql', 'permissions');
         await sqlRunner(queryRunner, '../database/sql/roles/insert_roles.up.sql', 'roles');

@@ -8,9 +8,10 @@ import { UserModule } from '../user/user.module';
 import { LocalStrategy } from './strategies/local.strategy';
 import { PassportModule } from '@nestjs/passport/dist/passport.module';
 import { BcryptService } from 'src/shared/services/bcrypt.service';
+import { TokenModule } from 'src/shared/services/token/token.module';
 
 @Module({
-  imports: [PassportModule, UserModule, TypeOrmModule.forFeature([Auth])],
+  imports: [PassportModule, UserModule, TokenModule, TypeOrmModule.forFeature([Auth])],
   controllers: [AuthController], 
   providers: [BcryptService, AuthService, AuthRepository, LocalStrategy],
   exports: [AuthService, AuthRepository, TypeOrmModule.forFeature([Auth])],

@@ -63,18 +63,7 @@ export class User {
   })
   roles: Role[];
 
-  @BeforeInsert()
-  async setDefaultRole() {
-    // Only assign default if no roles are provided manually
-    if (!this.roles || this.roles.length === 0) {
-      const roleRepository = getRepository(Role); 
-      const defaultRole = await roleRepository.findOneBy({ name: UserRole.USER });
-      
-      if (defaultRole) {
-        this.roles = [defaultRole];
-      }
-    }
-  }
+
 
 //   @ApiProperty({ example: '000-00-0000', description: 'Social Security Number (Auto-generated)' })
 //   @Column()

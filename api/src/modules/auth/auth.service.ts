@@ -16,6 +16,8 @@ import * as bcrypt  from 'bcryptjs';
 import { Logger } from '@nestjs/common';
 import { BcryptService } from 'src/shared/services/bcrypt.service';
 import { UserRepository } from '../user/user.repository';
+import { UserPayload } from 'src/shared/interfaces/user-payload.interface';
+import { TokenService } from 'src/shared/services/token/token.service';
 
 @Service()
 export class AuthService {
@@ -26,7 +28,8 @@ export class AuthService {
     private readonly bcryptService: BcryptService,
     private readonly authRepository: AuthRepository, // Inject the custom repository
     private readonly userService: UserService, // Inject the TypeORM repository
-    private readonly userRepository: UserRepository
+    private readonly userRepository: UserRepository,
+    private readonly tokenService: TokenService,
   ) {}
 
 
@@ -63,84 +66,17 @@ const savedAuth = await this.authRepository.save(newAuth);
     return `This action removes a #${id} auth`;
   }
 
-  async signIn(authLoginDto: { email: string; password: string; }): Promise<{ accessToken: string; refreshToken: string; userId: number } | null> {
-    const { email, password } = authLoginDto;   
+  async signIn(userPayload: UserPayload): Promise<{ accessToken: string; refreshToken: string; userId: number } | null> {
+    console.log("AuthService.signIn called with userPayload:", userPayload);
+    const data = await this.tokenService.generateAuthTokens(userPayload); 
+    console.log("Generated tokens:", data);
+    // Here you would implement the actual token generation logic
     return {
-      accessToken: "some-access-token",
-      refreshToken: "some-refresh-token",
-      userId: 1
+      accessToken: data.accessToken,
+      refreshToken: data.refreshToken,
+      userId: userPayload.userId
     }
 
-    /**
-     * 
-       try {
-      const expirationMs = parseInt(
-        this.configService.getOrThrow('JWT_ACCESS_TOKEN_EXPIRATION_MS'),
-      );
-      const refreshExpirationMs = parseInt(
-        this.configService.getOrThrow('JWT_REFRESH_TOKEN_EXPIRATION_MS'),
-      );
-
-      const expiresAccessToken = new Date(Date.now() + expirationMs);
-      const expiresRefreshToken = new Date(Date.now() + refreshExpirationMs);
-
-      const tokenPayload = {
-        userId: user.id,
-      };
-
-      const accessToken = this.jwtService.sign(tokenPayload, {
-        secret: this.configService.getOrThrow('JWT_ACCESS_TOKEN_SECRET'),
-        expiresIn: `${this.configService.getOrThrow(
-          'JWT_ACCESS_TOKEN_EXPIRATION_MS',
-        )}ms`,
-      });
-
-      const refreshToken = this.jwtService.sign(tokenPayload, {
-        secret: this.configService.getOrThrow('JWT_REFRESH_TOKEN_SECRET'),
-        expiresIn: `${this.configService.getOrThrow(
-          'JWT_REFRESH_TOKEN_EXPIRATION_MS',
-        )}ms`,
-      });
-
-      const userData = {
-        id: user.id,
-        uuid: user.uuid,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        avatar: user.userAvatar,
-        createdAt: user.createdAt,
-        updatedAt: user.updatedAt,
-      };
-
-      await this.usersService.updateUser(user.id, {
-        refreshToken: await hash(refreshToken, 10),
-      });
-
-      response.cookie('Authentication', accessToken, {
-        httpOnly: true,
-        secure: this.configService.get('NODE_ENV') === 'production',
-        expires: expiresAccessToken,
-      });
-
-      response.cookie('Refresh', refreshToken, {
-        httpOnly: true,
-        secure: this.configService.get('NODE_ENV') === 'production',
-        expires: expiresRefreshToken,
-      });
-
-      return response.json(userData);
-    } catch (error) {
-      this.logger.error('Login error:', {
-        error: error.message,
-        userId: user.id,
-        stack: error.stack,
-      });
-      throw new UnauthorizedException(
-        'Failed to process login. Please try again.',
-      );
-    }
-     */
   }
 
  async verifyUser(email: string, password: string) {
@@ -156,8 +92,12 @@ const savedAuth = await this.authRepository.save(newAuth);
     if (!authenticated) {
       throw new UnauthorizedException("Invalid credentials");
     }
-    
-    return await this.userService.findOne(auth.user.id);
+      const user = await this.userRepository.findOne({
+    where: { id: auth.user.id },
+    relations: ['roles', 'roles.permissions'], // This is crucial
+  });
+  
+    return user;
   } catch (error) {
     this.logger.error('Verify user error', error);
     throw new UnauthorizedException('Credentials are not valid');

@@ -2,6 +2,14 @@
 import { NodeEnvironment } from "./src/types/node-environment.type";
 
 declare global {
+    
+    namespace Express {
+        export interface Request {
+            payload?: IJwtPayload, // Add the user property to the Request interface
+            body: any,
+            user?: UserPayload; // Add user property to Request interface
+        }
+    }
 
     namespace NodeJS {
         interface ProcessEnv {
