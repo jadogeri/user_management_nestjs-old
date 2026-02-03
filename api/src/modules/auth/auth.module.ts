@@ -12,11 +12,13 @@ import { TokenModule } from 'src/shared/services/token/token.module';
 import { SessionModule } from '../session/session.module';
 import { ArgonModule } from '../argon/argon.module';
 import { ArgonService } from '../argon/argon.service';
+import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
+import { ConfigModule } from '@nestjs/config/dist/config.module';
 
 @Module({
-  imports: [ArgonModule, SessionModule, PassportModule, UserModule, TokenModule, TypeOrmModule.forFeature([Auth])],
+  imports: [ConfigModule, ArgonModule, SessionModule, PassportModule, UserModule, TokenModule, TypeOrmModule.forFeature([Auth])],
   controllers: [AuthController], 
-  providers: [BcryptService, AuthService,ArgonService, AuthRepository, LocalStrategy],
+  providers: [BcryptService, AuthService,ArgonService, AuthRepository, LocalStrategy, RefreshTokenStrategy],
   exports: [AuthService, AuthRepository, TypeOrmModule.forFeature([Auth])],
 })
 export class AuthModule {}
