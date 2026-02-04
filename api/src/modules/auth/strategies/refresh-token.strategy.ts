@@ -12,7 +12,7 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refres
         (req: Request) => req?.cookies?.refreshToken,
       ]),
       // 3. Use getOrThrow to ensure the key exists and fix the 'undefined' type error
-      secretOrKey: configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
+      secretOrKey: configService.getOrThrow<string>('JWT_REFRESH_TOKEN_SECRET'),
       passReqToCallback: true,
     });
   }

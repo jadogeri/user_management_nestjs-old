@@ -10,6 +10,7 @@ export class TokenService {
   ) {}
 
   async generateAuthTokens(user: any) {
+    
     const payload = { sub: user.id, email: user.email, roles: user.roles };
 
     // Secrets and expiration are already baked into the services
